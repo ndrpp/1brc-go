@@ -9,10 +9,10 @@ import (
 )
 
 type Measurement struct {
-	min   float64
-	max   float64
-	count float64
-	sum   float64
+	min   int64
+	max   int64
+	count int64
+	sum   int64
 }
 
 func main() {
@@ -38,7 +38,6 @@ func main() {
 				obj.min = value
 			}
 			hashmap[station] = obj
-            fmt.Println("Duplicate entry!", station)
 		} else {
 			hashmap[station] = &Measurement{
 				min:   value,
@@ -46,8 +45,6 @@ func main() {
 				count: 1,
 				sum:   value,
 			}
-            
-            fmt.Println("obj: ",station,"-", hashmap[station])
 		}
 	}
 
@@ -58,17 +55,16 @@ func main() {
 	printOutput(hashmap)
 }
 
-func parseLine(line string) (string, float64) {
-	name := strings.Split(line, ";")[0]
-	value, err := strconv.ParseFloat(strings.Split(line, ";")[1], 8)
-	if err != nil {
-		fmt.Println(err)
-	}
+func parseLine(line string) (string, int64) {
+	arr := strings.Split(line, ";")
+	name := arr[0]
+	temp := arr[1]
+	value, _ := strconv.ParseInt((temp[:len(temp)-2] + temp[len(temp)-1:]), 10, 64)
 	return name, value
 }
 
 func printOutput(hashmap map[string]*Measurement) {
 	for key, val := range hashmap {
-		fmt.Printf("%s:%f/%f/%f\n", key, val.min, val.sum/val.count, val.max)
+		fmt.Printf("%s:%.1f/%.1f/%.1f\n", key, float64(val.min)/10.0, float64(val.sum)/float64(val.count)/10.0, float64(val.max)/10.0)
 	}
 }
